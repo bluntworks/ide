@@ -57,16 +57,17 @@ const Autocomplete: AutocompleteList = forwardRef(({
         overflow-y-auto
         overscroll-none
         rounded
+        border-slate-200
         border
-        border-slate-300
         bg-slate-50
         shadow-md
+        no-scroller
       "
     >
       {items.map((item, index) => (
         <Item
-          key={item.value}
-          item={item}
+          key={item.refIndex}
+          result={item}
           isSelected={index === selectedIndex}
           selectItem={() => selectItem(index)}
         />

@@ -2,9 +2,9 @@ import { Editor, Range } from '@tiptap/core'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view'
 
-import type { Reference } from 'editor/referenceType'
+import type { ResultType } from 'editor/referenceType'
 
-export interface SuggestionOptions<Item = Reference> {
+export interface SuggestionOptions<Item = ResultType> {
   editor: Editor,
   char?: string,
   startOfLine?: boolean,
@@ -28,21 +28,21 @@ export interface SuggestionOptions<Item = Reference> {
   }) => boolean,
 }
 
-export interface SuggestionProps<Item = Reference> {
-  editor: Editor,
-  range: Range,
-  query: string,
-  text: string,
-  items: Item[],
-  command: (props: Item) => void,
-  decorationNode: Element | null,
-  clientRect: (() => DOMRect) | null,
+export interface SuggestionProps<Item = ResultType> {
+  editor: Editor
+  range: Range
+  query: string
+  text: string
+  items: Item[]
+  command: (props: Item) => void
+  decorationNode: Element | null
+  clientRect: (() => DOMRect) | null
 }
 
 export interface SuggestionKeyDownProps {
-  view: EditorView,
-  event: KeyboardEvent,
-  range: Range,
+  view: EditorView
+  event: KeyboardEvent
+  range: Range
 }
 
 interface SuggestionPluginState {
@@ -57,7 +57,7 @@ interface SuggestionPluginState {
   wasCharTyped: boolean
 }
 
-export function Suggestion<Item = Reference>({
+export function Suggestion<Item = ResultType>({
   editor,
   char = '/',
   startOfLine = false,
@@ -177,8 +177,8 @@ export function Suggestion<Item = Reference>({
             if (prefixWord) {
               const match = prefixWord[0]
               const range = {
-                from: text.length - match.length + 1,
-                to: text.length + 1,
+                from: textFrom + text.length - match.length + 1,
+                to: textFrom + text.length + 1,
               }
 
               if (allow({ editor, range })) {
@@ -194,6 +194,8 @@ export function Suggestion<Item = Reference>({
             } else {
               next.active = false
             }
+          } else {
+            next.active = false
           }
         } else {
           next.active = false
@@ -217,14 +219,9 @@ export function Suggestion<Item = Reference>({
         const state = this.getState(view.state)
         if (!state) return
 
-        // const preceedingChar = view.state.doc.textBetween(from - 1, from)
-
         if (text) {
           state.wasCharTyped = true
         }
-
-        // if (text === char && (preceedingChar === ' ' || !preceedingChar)) {
-        // }
 
         return false
       },

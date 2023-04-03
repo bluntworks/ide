@@ -1,14 +1,17 @@
 import { EditorContent } from '@tiptap/react'
+import Fuse from 'fuse.js'
 
 import Text from 'components/Text'
 import { Block } from 'state/store'
 import useDocEditor from 'hooks/useDocEditor'
+import { Reference } from 'editor/referenceType'
 
 export interface Props {
   title?: string
   placeholder?: string
   onChange: (value: string) => void
   block: Block
+  referenceSearch: Fuse<Reference>
 }
 
 function PromptEditor({
@@ -16,11 +19,13 @@ function PromptEditor({
   onChange,
   block,
   placeholder,
+  referenceSearch,
 }: Props) {
   const editor = useDocEditor({
     initialContent: block.content,
     onContentChange: onChange,
     placeholder,
+    referenceSearch,
   })
 
   return (
@@ -42,12 +47,6 @@ function PromptEditor({
       }
       <EditorContent
         editor={editor}
-        className="
-          flex-1
-          flex
-          w-[65ch]
-          flex-col
-        "
       />
     </div>
   )
